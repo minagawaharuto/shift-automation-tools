@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最適化完了</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>シフト最適化完了</h1>
+            <p class="subtitle">{{ year_month }}</p>
+        </header>
+
+        <div class="complete-container">
+            <div class="success-icon">✓</div>
+            <h2>シフトの最適化が完了しました！</h2>
+            <p>全員の希望をもとに、最適なシフトが生成されました。</p>
+
+            <div class="actions">
+                <a href="{{ url_for('download') }}" class="btn-download">
+                    最適化シフトをダウンロード
+                </a>
+                <a href="{{ url_for('index') }}" class="btn-secondary">
+                    トップページに戻る
+                </a>
+            </div>
+
+            <div class="info-box">
+                <h3>ダウンロードファイルについて</h3>
+                <ul>
+                    <li><strong>シフト表</strong>: 最適化されたシフト（編集可能）</li>
+                    <li><strong>休み日数カウント</strong>: 各スタッフの勤務統計</li>
+                    <li><strong>カレンダー</strong>: 日付別のシフト配置</li>
+                    <li><strong>統計</strong>: 全体の統計情報</li>
+                    <li><strong>希望比較</strong>: 希望と実際の一致度</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .complete-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            line-height: 120px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 4rem;
+            border-radius: 50%;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .complete-container h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+
+        .complete-container p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .btn-download, .btn-secondary {
+            padding: 1.2rem 2.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-download:hover, .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .info-box li {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+    </style>
+</body>
+</html>

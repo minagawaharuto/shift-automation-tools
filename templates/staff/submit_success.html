@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提出完了</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>提出完了</h1>
+            <p class="subtitle">{{ year_month }}</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="success-container">
+            <div class="success-icon">✓</div>
+            <h2>{{ staff_name }}さん</h2>
+            <p>希望シフトの提出が完了しました！</p>
+
+            <div class="info-box">
+                <h3>次のステップ</h3>
+                <ul>
+                    <li>全員の提出が完了すると、自動的にシフトが最適化されます</li>
+                    <li>提出内容を変更したい場合は、再度入力してください</li>
+                    <li>最適化されたシフトは管理者からお知らせがあります</li>
+                </ul>
+            </div>
+
+            <div class="actions">
+                <a href="{{ url_for('staff_input', year_month=year_month, staff_name=staff_name) }}" class="btn-secondary">
+                    内容を編集する
+                </a>
+                <a href="{{ url_for('index') }}" class="btn-primary">
+                    トップページに戻る
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 3rem;
+            border-radius: 50%;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-container h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+
+        .success-container p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .info-box li {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</body>
+</html>

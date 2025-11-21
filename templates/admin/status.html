@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提出状況確認 - {{ year_month }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>提出状況確認</h1>
+            <p class="subtitle">{{ year_month }}</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="status-section">
+            <h2>スタッフ提出状況</h2>
+
+            <table class="status-table">
+                <thead>
+                    <tr>
+                        <th>スタッフ名</th>
+                        <th>提出状態</th>
+                        <th>提出日時</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for staff in staff_list %}
+                    <tr>
+                        <td>{{ staff.name }}</td>
+                        <td>
+                            {% if staff.submitted %}
+                            <span class="badge badge-success">✓ 提出済み</span>
+                            {% else %}
+                            <span class="badge badge-warning">未提出</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ staff.submitted_at if staff.submitted_at else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="action-section">
+            {% if all_submitted and not optimized %}
+            <div class="success-message">
+                <p>✓ 全員が提出完了しました！</p>
+                <a href="{{ url_for('admin_optimize', year_month=year_month) }}" class="btn-optimize">
+                    シフトを最適化する
+                </a>
+            </div>
+            {% elif optimized %}
+            <div class="success-message">
+                <p>✓ シフトの最適化が完了しています</p>
+                <a href="{{ url_for('download', year_month=year_month) }}" class="btn-download">
+                    最適化シフトをダウンロード
+                </a>
+            </div>
+            {% else %}
+            <div class="info-message">
+                <p>まだ提出していないスタッフがいます</p>
+                {% if all_submitted %}
+                <a href="{{ url_for('admin_optimize', year_month=year_month) }}" class="btn-optimize">
+                    手動で最適化を実行
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </section>
+
+        <div class="back-link">
+            <a href="{{ url_for('admin') }}">← 管理者メニューに戻る</a>
+        </div>
+    </div>
+
+    <style>
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .status-table th {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .status-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .status-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .action-section {
+            margin: 2rem 0;
+        }
+
+        .success-message, .info-message {
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .info-message {
+            background: #f8f9fa;
+            color: #666;
+        }
+
+        .success-message p, .info-message p {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .btn-optimize, .btn-download {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-optimize:hover, .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最適化完了 - {{ year_month }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>シフト最適化完了</h1>
+            <p class="subtitle">{{ year_month }}</p>
+        </header>
+
+        <div class="result-container">
+            <div class="success-message">
+                <div class="success-icon">✓</div>
+                <h2>最適化が正常に完了しました！</h2>
+                <p>最適化されたシフト表が生成されました。</p>
+            </div>
+
+            <div class="result-actions">
+                <a href="{{ url_for('download', year_month=year_month) }}" class="btn-download">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Excelファイルをダウンロード
+                </a>
+
+                <a href="{{ url_for('index') }}" class="btn-secondary">
+                    新しいシフトを作成
+                </a>
+            </div>
+
+            <div class="info-box">
+                <h3>ダウンロードファイルについて</h3>
+                <ul>
+                    <li><strong>シフト表</strong>: 最適化されたシフトが表示されます（編集可能）</li>
+                    <li><strong>休み日数カウント</strong>: 各スタッフの勤務統計が自動計算されます</li>
+                    <li><strong>カレンダー</strong>: 日付別のシフト配置が一覧できます</li>
+                    <li><strong>統計</strong>: 全体の統計情報が表示されます</li>
+                    <li><strong>希望比較</strong>: 希望と実際のシフトの一致度が確認できます</li>
+                </ul>
+            </div>
+
+            <div class="tips-box">
+                <h3>次のステップ</h3>
+                <ol>
+                    <li>ダウンロードしたExcelファイルを開く</li>
+                    <li>「シフト表」シートで必要に応じて手動調整</li>
+                    <li>「休み日数カウント」で各スタッフの日数を確認</li>
+                    <li>完成したシフトをスタッフに共有</li>
+                </ol>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2024 シフト最適化システム</p>
+        </footer>
+    </div>
+
+    <style>
+        .result-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-message h2 {
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.8rem;
+        }
+
+        .success-message p {
+            margin: 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-download {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            min-width: 200px;
+            padding: 1.2rem 2rem;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .info-box, .tips-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .info-box h3, .tips-box h3 {
+            margin-top: 0;
+            color: #667eea;
+            font-size: 1.3rem;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tips-box ol {
+            padding-left: 1.5rem;
+        }
+
+        .tips-box li {
+            padding: 0.5rem 0;
+            line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+        }
+    </style>
+</body>
+</html>

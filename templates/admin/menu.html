@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者メニュー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>管理者メニュー</h1>
+            <p class="subtitle">シフト管理機能</p>
+        </header>
+
+        <div class="admin-menu">
+            <a href="{{ url_for('admin_create') }}" class="menu-card">
+                <div class="icon">➕</div>
+                <h2>月次シフト作成</h2>
+                <p>新しい月のシフトを作成</p>
+            </a>
+
+            <a href="{{ url_for('index') }}" class="menu-card">
+                <div class="icon">📊</div>
+                <h2>提出状況確認</h2>
+                <p>トップページから月を選択</p>
+            </a>
+        </div>
+
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">← トップページに戻る</a>
+        </div>
+    </div>
+
+    <style>
+        .admin-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .menu-card {
+            display: block;
+            padding: 3rem 2rem;
+            text-align: center;
+            text-decoration: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .menu-card .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .menu-card h2 {
+            margin: 1rem 0;
+            font-size: 1.5rem;
+        }
+
+        .menu-card p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</body>
+</html>

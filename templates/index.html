@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シフト作成アプリ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>シフト作成アプリ</h1>
+            <p class="subtitle">{{ year_month }}</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if not shift_exists %}
+        <!-- 初回設定が必要 -->
+        <section class="info-box">
+            <h2>📋 初回設定が必要です</h2>
+            <p>まずはスタッフの登録を行ってください。</p>
+            <a href="{{ url_for('setup') }}" class="btn-primary">初回設定：スタッフ登録</a>
+        </section>
+
+        {% else %}
+        <!-- スタッフ一覧 -->
+        <section class="staff-section">
+            <h2>👥 スタッフ一覧</h2>
+            <p class="help-text">あなたの名前をクリックして希望シフトを入力してください</p>
+
+            <div class="staff-grid">
+                {% for staff in staff_list %}
+                <a href="{{ url_for('input_form', staff_name=staff.name) }}" class="staff-card {% if staff.submitted %}submitted{% endif %}">
+                    <div class="icon">👤</div>
+                    <h3>{{ staff.name }}</h3>
+                    {% if staff.submitted %}
+                    <span class="status-badge">✓ 提出済み</span>
+                    {% else %}
+                    <span class="status-badge pending">未提出</span>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+
+            <div class="manage-button-container">
+                <a href="{{ url_for('manage_staff') }}" class="btn-manage">⚙️ スタッフを追加・削除</a>
+            </div>
+        </section>
+
+        <!-- 最適化状況 -->
+        {% if optimized %}
+        <section class="complete-section">
+            <div class="success-message">
+                <h2>✓ シフトの最適化が完了しました！</h2>
+                <a href="{{ url_for('download') }}" class="btn-download">最適化シフトをダウンロード</a>
+            </div>
+        </section>
+        {% elif all_submitted %}
+        <section class="info-box">
+            <h2>✓ 全員の提出が完了しています</h2>
+            <p>最適化されたシフトが生成されています。</p>
+        </section>
+        {% else %}
+        <section class="info-box">
+            <h2>📊 提出状況</h2>
+            <p>{{ staff_list|selectattr('submitted')|list|length }}/{{ staff_list|length }}名が提出済み</p>
+            <p class="help-text">全員が提出完了すると、自動的にシフトが最適化されます。</p>
+        </section>
+        {% endif %}
+
+        {% endif %}
+    </div>
+
+    <style>
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .staff-card {
+            display: block;
+            padding: 2rem 1rem;
+            text-align: center;
+            text-decoration: none;
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .staff-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .staff-card.submitted {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #28a745;
+        }
+
+        .staff-card .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .staff-card h3 {
+            margin: 0.5rem 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            background: #28a745;
+            color: white;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .info-box h2 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .complete-section {
+            margin: 2rem 0;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .success-message h2 {
+            margin-top: 0;
+        }
+
+        .btn-primary, .btn-download {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover, .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-download {
+            background: white;
+            color: #667eea;
+            border: 2px solid white;
+        }
+
+        .btn-download:hover {
+            background: #f0f0f0;
+        }
+
+        .manage-button-container {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .btn-manage {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-manage:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+    </style>
+</body>
+</html>

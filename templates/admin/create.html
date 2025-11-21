@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>月次シフト作成</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>月次シフト作成</h1>
+            <p class="subtitle">{{ year_month }}</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" id="createForm">
+            <section class="staff-section">
+                <h2>スタッフ登録</h2>
+                <p class="help-text">このシフトに参加するスタッフを登録してください</p>
+
+                <div id="staffList">
+                    <div class="staff-input">
+                        <label>スタッフ1:</label>
+                        <input type="text" name="staff_name_0" required placeholder="氏名を入力">
+                    </div>
+                </div>
+
+                <button type="button" class="btn-add" onclick="addStaff()">+ スタッフを追加</button>
+            </section>
+
+            <div class="submit-section">
+                <button type="submit" class="btn-submit">シフトを作成</button>
+            </div>
+        </form>
+
+        <div class="back-link">
+            <a href="{{ url_for('admin') }}">← 管理者メニューに戻る</a>
+        </div>
+    </div>
+
+    <script>
+        let staffCount = 1;
+
+        function addStaff() {
+            if (staffCount >= 20) {
+                alert('スタッフは最大20名まで登録できます');
+                return;
+            }
+
+            const staffList = document.getElementById('staffList');
+            const staffDiv = document.createElement('div');
+            staffDiv.className = 'staff-input';
+            staffDiv.innerHTML = `
+                <label>スタッフ${staffCount + 1}:</label>
+                <input type="text" name="staff_name_${staffCount}" required placeholder="氏名を入力">
+                <button type="button" class="btn-remove" onclick="removeStaff(this)">削除</button>
+            `;
+            staffList.appendChild(staffDiv);
+            staffCount++;
+        }
+
+        function removeStaff(btn) {
+            const staffInputs = document.querySelectorAll('.staff-input');
+            if (staffInputs.length <= 1) {
+                alert('最低1名のスタッフが必要です');
+                return;
+            }
+            btn.parentElement.remove();
+            staffCount--;
+        }
+
+        document.getElementById('createForm').addEventListener('submit', function(e) {
+            if (!confirm('このスタッフ構成でシフトを作成しますか？')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

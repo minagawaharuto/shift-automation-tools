@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>希望シフト入力 - {{ staff_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>希望シフト入力</h1>
+            <p class="subtitle">{{ year_month }} - {{ staff_name }}</p>
+        </header>
+
+        <form method="POST" action="{{ url_for('staff_submit') }}" id="shiftForm">
+            <input type="hidden" name="year_month" value="{{ year_month }}">
+            <input type="hidden" name="staff_name" value="{{ staff_name }}">
+
+            <!-- 一括設定機能 -->
+            <section class="bulk-section">
+                <h2>便利機能</h2>
+                <div class="bulk-controls">
+                    <select id="bulkShiftType" class="bulk-select">
+                        <option value="">シフトを選択...</option>
+                        {% for shift_type in shift_types %}
+                        <option value="{{ shift_type }}">{{ shift_type }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="btn-bulk" onclick="applyToAll()">全日に適用</button>
+                    <button type="button" class="btn-bulk" onclick="applyToWeekdays()">平日に適用</button>
+                    <button type="button" class="btn-bulk" onclick="applyToWeekends()">土日に適用</button>
+                </div>
+            </section>
+
+            <!-- シフト選択 -->
+            <section class="shift-section">
+                <h2>希望シフト選択</h2>
+                <div class="shift-grid">
+                    {% for date in dates %}
+                    <div class="shift-item {% if date.weekday in ['土', '日'] %}weekend{% endif %}">
+                        <div class="date-label">
+                            <span class="date">{{ date.formatted }}</span>
+                            <span class="weekday">{{ date.weekday }}</span>
+                        </div>
+                        <select name="shift_{{ date.day }}" class="shift-select" data-weekday="{{ date.weekday }}">
+                            {% for shift_type in shift_types %}
+                            <option value="{{ shift_type }}" {% if existing_preferences.get(date.day) == shift_type %}selected{% endif %}>
+                                {{ shift_type }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <div class="submit-section">
+                <button type="submit" class="btn-submit">希望を提出する</button>
+            </div>
+        </form>
+
+        <div class="back-link">
+            <a href="{{ url_for('staff_select', year_month=year_month) }}">← 名前選択に戻る</a>
+        </div>
+    </div>
+
+    <script>
+        function applyToAll() {
+            const shiftType = document.getElementById('bulkShiftType').value;
+            if (!shiftType) {
+                alert('シフトを選択してください');
+                return;
+            }
+
+            const selects = document.querySelectorAll('.shift-select');
+            selects.forEach(select => {
+                select.value = shiftType;
+            });
+
+            alert('全日に適用しました');
+        }
+
+        function applyToWeekdays() {
+            const shiftType = document.getElementById('bulkShiftType').value;
+            if (!shiftType) {
+                alert('シフトを選択してください');
+                return;
+            }
+
+            const selects = document.querySelectorAll('.shift-select');
+            selects.forEach(select => {
+                const weekday = select.getAttribute('data-weekday');
+                if (weekday !== '土' && weekday !== '日') {
+                    select.value = shiftType;
+                }
+            });
+
+            alert('平日に適用しました');
+        }
+
+        function applyToWeekends() {
+            const shiftType = document.getElementById('bulkShiftType').value;
+            if (!shiftType) {
+                alert('シフトを選択してください');
+                return;
+            }
+
+            const selects = document.querySelectorAll('.shift-select');
+            selects.forEach(select => {
+                const weekday = select.getAttribute('data-weekday');
+                if (weekday === '土' || weekday === '日') {
+                    select.value = shiftType;
+                }
+            });
+
+            alert('土日に適用しました');
+        }
+
+        document.getElementById('shiftForm').addEventListener('submit', function(e) {
+            if (!confirm('この内容で希望を提出しますか？\n提出後も再編集できます。')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+    <style>
+        .bulk-section {
+            background: #fff3cd;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .bulk-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .bulk-select {
+            flex: 1;
+            min-width: 150px;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-bulk {
+            padding: 0.8rem 1.5rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-bulk:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .shift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .shift-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .shift-item.weekend {
+            background: #f0f8ff;
+        }
+
+        .date-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .date-label .date {
+            color: #333;
+        }
+
+        .date-label .weekday {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .shift-item.weekend .weekday {
+            color: #ff4757;
+        }
+
+        .shift-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .shift-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+    </style>
+</body>
+</html>

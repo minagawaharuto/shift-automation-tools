@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スタッフ管理</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>スタッフ管理</h1>
+            <p class="subtitle">{{ year_month }}</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- 現在のスタッフ一覧 -->
+        <section class="staff-section">
+            <h2>👥 現在のスタッフ一覧</h2>
+            <div class="staff-list">
+                {% for staff in staff_list %}
+                <div class="staff-item">
+                    <div class="staff-info">
+                        <span class="staff-name">{{ staff.name }}</span>
+                        {% if staff.submitted %}
+                        <span class="status-badge submitted">✓ 提出済み</span>
+                        {% else %}
+                        <span class="status-badge pending">未提出</span>
+                        {% endif %}
+                    </div>
+                    <form method="POST" style="display: inline;" onsubmit="return confirm('{{ staff.name }}を削除してもよろしいですか？');">
+                        <input type="hidden" name="action" value="remove">
+                        <input type="hidden" name="staff_name" value="{{ staff.name }}">
+                        <button type="submit" class="btn-remove">削除</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- スタッフ追加フォーム -->
+        <section class="add-section">
+            <h2>➕ スタッフを追加</h2>
+            <form method="POST" class="add-form">
+                <input type="hidden" name="action" value="add">
+                <div class="form-group">
+                    <input type="text" name="staff_name" placeholder="新しいスタッフ名を入力" required class="staff-input">
+                    <button type="submit" class="btn-add">追加</button>
+                </div>
+            </form>
+        </section>
+
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">← トップページに戻る</a>
+        </div>
+    </div>
+
+    <style>
+        .staff-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .staff-list {
+            margin-top: 1.5rem;
+        }
+
+        .staff-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+            border: 2px solid #e0e0e0;
+        }
+
+        .staff-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .staff-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            min-width: 120px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.submitted {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-badge.pending {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-remove {
+            padding: 0.5rem 1.2rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-remove:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .add-section {
+            background: #e7f3ff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .add-section h2 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .add-form {
+            margin-top: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .staff-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .staff-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-add {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</body>
+</html>

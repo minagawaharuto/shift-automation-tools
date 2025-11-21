@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名前選択 - {{ year_month }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{ year_month }}</h1>
+            <p class="subtitle">あなたの名前を選択してください</p>
+        </header>
+
+        <div class="staff-grid">
+            {% for staff in staff_list %}
+            <a href="{{ url_for('staff_input', year_month=year_month, staff_name=staff.name) }}" class="staff-card {% if staff.submitted %}submitted{% endif %}">
+                <div class="icon">👤</div>
+                <h2>{{ staff.name }}</h2>
+                {% if staff.submitted %}
+                <span class="status-badge">✓ 提出済み</span>
+                {% else %}
+                <span class="status-badge pending">未提出</span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="back-link">
+            <a href="{{ url_for('staff') }}">← 月選択に戻る</a>
+        </div>
+    </div>
+
+    <style>
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .staff-card {
+            display: block;
+            padding: 2rem 1rem;
+            text-align: center;
+            text-decoration: none;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .staff-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .staff-card.submitted {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #28a745;
+        }
+
+        .staff-card .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .staff-card h2 {
+            margin: 0.5rem 0;
+            font-size: 1.3rem;
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            background: #28a745;
+            color: white;
+        }
+
+        .status-badge.pending {
+            background: #ffc107;
+            color: #333;
+        }
+    </style>
+</body>
+</html>

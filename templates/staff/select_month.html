@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>月選択</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>希望シフト入力</h1>
+            <p class="subtitle">対象月を選択してください</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="month-list">
+            {% for month in available_months %}
+            <a href="{{ url_for('staff_select', year_month=month) }}" class="month-card">
+                <div class="icon">📅</div>
+                <h2>{{ month }}</h2>
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">← トップページに戻る</a>
+        </div>
+    </div>
+
+    <style>
+        .month-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .month-card {
+            display: block;
+            padding: 2rem;
+            text-align: center;
+            text-decoration: none;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .month-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .month-card .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .month-card h2 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+    </style>
+</body>
+</html>
