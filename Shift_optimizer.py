@@ -353,24 +353,31 @@ class ShiftOptimizerV3_2:
         pd.DataFrame(comp_data).to_excel(writer, sheet_name='希望比較', index=False)
 
     def run(self):
-        print("\n" + "=" * 60)
-        print("🚀 シフト自動最適化プログラム Ver3.2")
-        print("=" * 60)
-        year_month = self.get_year_month_input()
-        folder_path, input_file, output_file = self.setup_file_paths(year_month)
-        employees, preferences, dates = self.load_excel_from_folder(input_file, year_month)
-        result, stats = self.optimize_shifts(employees, preferences, len(dates))
-        if result:
-            self.save_to_folder(output_file, employees, dates, preferences, result, stats)
-            # PADから実行された場合はGUIメッセージを出さない（処理が止まるのを防ぐため）
-            if GUI_AVAILABLE and len(sys.argv) <= 1:
-                try:
-                    root = tk.Tk(); root.withdraw()
-                    messagebox.showinfo("完了", f"完了しました！\n{output_file}")
-                    root.destroy()
-                except: pass
-        else:
-            print("失敗しました")
+        try:
+            print("\n" + "=" * 60)
+            print("🚀 シフト自動最適化プログラム Ver3.2")
+            print("=" * 60)
+            year_month = self.get_year_month_input()
+            folder_path, input_file, output_file = self.setup_file_paths(year_month)
+            employees, preferences, dates = self.load_excel_from_folder(input_file, year_month)
+            result, stats = self.optimize_shifts(employees, preferences, len(dates))
+            if result:
+                self.save_to_folder(output_file, employees, dates, preferences, result, stats)
+                # PADから実行された場合はGUIメッセージを出さない（処理が止まるのを防ぐため）
+                if GUI_AVAILABLE and len(sys.argv) <= 1:
+                    try:
+                        root = tk.Tk(); root.withdraw()
+                        messagebox.showinfo("完了", f"完了しました！\n{output_file}")
+                        root.destroy()
+                    except: pass
+            else:
+                print("❌ 最適解が見つかりませんでした")
+                sys.exit(1)
+        except Exception as e:
+            print(f"\n❌ エラーが発生しました: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
 
 if __name__ == "__main__":
     ShiftOptimizerV3_2(base_path="output").run()
