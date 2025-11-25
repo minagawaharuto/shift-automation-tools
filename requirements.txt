@@ -1,7 +1,7 @@
 Flask==3.0.3
 pandas==2.2.3
 openpyxl==3.1.5
-ortools==9.11.4210
+ortools==9.14.6206
 numpy==1.26.4
 Werkzeug==3.0.4
 gunicorn==23.0.0
