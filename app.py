@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 import subprocess
 import sys
+import os
 import openpyxl
 from openpyxl.styles import Font, Alignment, Border, Side
 from excel_manager import ExcelManager
@@ -384,4 +385,5 @@ if __name__ == '__main__':
     print("🌐 ブラウザで http://localhost:5000 にアクセス")
 
     print("=" * 60)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.getenv('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
